@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "797289159260",
+    "project_id": "dialog-6827a",
+    "storage_bucket": "dialog-6827a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:797289159260:android:48ca324174ee2212992499",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhDYn7YoWsoqeW4dGCbbjDKZk97eyxaeE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

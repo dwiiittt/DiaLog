@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">DiaLog</string>
+
+    <string-array name="tipe_diabetes_array">
+        <item>Tipe 1</item>
+        <item>Tipe 2</item>
+        <item>Tidak tahu</item>
+    </string-array>
+
+    <string-array name="jenis_makanan_array">
+        <item>Sarapan</item>
+        <item>Makan Siang</item>
+        <item>Makan Malam</item>
+        <item>Snack</item>
+    </string-array>
+
+</resources>
