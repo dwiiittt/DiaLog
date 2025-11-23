@@ -2,15 +2,18 @@ package com.example.myapplication
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast // <-- PENTING: Import ini sebelumnya kurang
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.databinding.ActivityRekomendasiBinding
 import com.google.firebase.auth.FirebaseAuth
 
 class RekomendasiActivity : AppCompatActivity() {
 
-    private lateinit: ActivityRekomendasiBinding
+    // --- PERBAIKAN DI SINI ---
+    // Sebelumnya: private lateinit: ActivityRekomendasiBinding (Salah)
+    // Sekarang:
+    private lateinit var binding: ActivityRekomendasiBinding
     private lateinit var mAuth: FirebaseAuth
-    // Kita tidak perlu db atau adapter lagi di sini
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,43 +33,23 @@ class RekomendasiActivity : AppCompatActivity() {
         setupCategoryListeners()
     }
 
-    /**
-     * BARU: Atur listener untuk setiap Card Kategori
-     */
     private fun setupCategoryListeners() {
         binding.cardSarapan.setOnClickListener {
-            // Kita akan buat "ResepListActivity" nanti
-            // Kita kirim judul dan kategori yang akan difilter
-            // openResepList("Sarapan")
-
-            // Untuk sementara, tampilkan Toast
             Toast.makeText(this, "Membuka Resep Sarapan", Toast.LENGTH_SHORT).show()
         }
 
         binding.cardMakanSiang.setOnClickListener {
-            // openResepList("Makan Siang")
             Toast.makeText(this, "Membuka Resep Makan Siang", Toast.LENGTH_SHORT).show()
         }
 
         binding.cardMakanMalam.setOnClickListener {
-            // openResepList("Makan Malam")
             Toast.makeText(this, "Membuka Resep Makan Malam", Toast.LENGTH_SHORT).show()
         }
 
         binding.cardSnack.setOnClickListener {
-            // openResepList("Snack")
             Toast.makeText(this, "Membuka Resep Snack", Toast.LENGTH_SHORT).show()
         }
     }
-
-    /* // Nanti kita akan buat fungsi ini:
-    private fun openResepList(kategori: String) {
-        val intent = Intent(this, ResepListActivity::class.java)
-        intent.putExtra("KATEGORI_RESEP", kategori)
-        startActivity(intent)
-    }
-    */
-
 
     private fun setupBottomNavigation() {
         binding.bottomNavigation.selectedItemId = R.id.nav_rekomendasi
