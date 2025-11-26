@@ -2,16 +2,12 @@ package com.example.myapplication
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast // <-- PENTING: Import ini sebelumnya kurang
 import androidx.appcompat.app.AppCompatActivity
 import com.example.myapplication.databinding.ActivityRekomendasiBinding
 import com.google.firebase.auth.FirebaseAuth
 
 class RekomendasiActivity : AppCompatActivity() {
 
-    // --- PERBAIKAN DI SINI ---
-    // Sebelumnya: private lateinit: ActivityRekomendasiBinding (Salah)
-    // Sekarang:
     private lateinit var binding: ActivityRekomendasiBinding
     private lateinit var mAuth: FirebaseAuth
 
@@ -33,22 +29,38 @@ class RekomendasiActivity : AppCompatActivity() {
         setupCategoryListeners()
     }
 
+    /**
+     * FUNGSI UTAMA: Mengatur aksi klik tombol kategori
+     */
     private fun setupCategoryListeners() {
+        // Hapus Toast, ganti dengan pemanggilan fungsi openResepList
+
         binding.cardSarapan.setOnClickListener {
-            Toast.makeText(this, "Membuka Resep Sarapan", Toast.LENGTH_SHORT).show()
+            openResepList("Sarapan")
         }
 
         binding.cardMakanSiang.setOnClickListener {
-            Toast.makeText(this, "Membuka Resep Makan Siang", Toast.LENGTH_SHORT).show()
+            openResepList("Makan Siang")
         }
 
         binding.cardMakanMalam.setOnClickListener {
-            Toast.makeText(this, "Membuka Resep Makan Malam", Toast.LENGTH_SHORT).show()
+            openResepList("Makan Malam")
         }
 
         binding.cardSnack.setOnClickListener {
-            Toast.makeText(this, "Membuka Resep Snack", Toast.LENGTH_SHORT).show()
+            openResepList("Snack")
         }
+    }
+
+    /**
+     * FUNGSI BARU: Membuka halaman daftar resep & mengirim kategori
+     */
+    private fun openResepList(kategori: String) {
+        val intent = Intent(this, ResepListActivity::class.java)
+        // Kita kirim data teks (misal: "Sarapan") ke halaman sebelah
+        // agar halaman sebelah tahu resep mana yang harus ditampilkan
+        intent.putExtra("KATEGORI_RESEP", kategori)
+        startActivity(intent)
     }
 
     private fun setupBottomNavigation() {

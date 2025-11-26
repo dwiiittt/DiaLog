@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Intent // <-- INI YANG KURANG TADI
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.myapplication.databinding.ActivityResepListBinding
 import com.google.firebase.firestore.FirebaseFirestore
+import java.util.ArrayList // <-- Ini juga penting untuk pengiriman data list
 
 class ResepListActivity : AppCompatActivity() {
 
@@ -34,8 +36,22 @@ class ResepListActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         resepAdapter = ResepAdapter(resepList) { resep ->
-            // Nanti: Buka DetailResepActivity
-            Toast.makeText(this, "Memilih: ${resep.nama_resep}", Toast.LENGTH_SHORT).show()
+            // SAAT ITEM DIKLIK:
+            val intent = Intent(this, DetailResepActivity::class.java)
+
+            // Kirim semua data resep ke halaman sebelah
+            intent.putExtra("NAMA", resep.nama_resep)
+            intent.putExtra("KATEGORI", resep.kategori)
+            intent.putExtra("KALORI", resep.total_kalori)
+            intent.putExtra("KARBO", resep.total_karbo)
+            intent.putExtra("GI", resep.level_gi)
+            intent.putExtra("FOTO", resep.foto_resep_base64)
+
+            // Kirim List (ArrayList)
+            intent.putStringArrayListExtra("BAHAN", ArrayList(resep.bahan))
+            intent.putStringArrayListExtra("LANGKAH", ArrayList(resep.langkah_langkah))
+
+            startActivity(intent)
         }
         binding.rvResepList.layoutManager = LinearLayoutManager(this)
         binding.rvResepList.adapter = resepAdapter
