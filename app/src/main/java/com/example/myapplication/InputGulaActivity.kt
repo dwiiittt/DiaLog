@@ -149,6 +149,17 @@ class InputGulaActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 Toast.makeText(this, "Catatan berhasil disimpan!", Toast.LENGTH_SHORT).show()
                 // Kembali ke Dashboard setelah berhasil
+                // --- TAMBAHKAN KODE DI BAWAH INI ---
+
+                // 1. Buat Intent ke Dashboard
+                val intent = Intent(this, DashboardActivity::class.java)
+
+                // 2. Hapus tumpukan activity lama (agar tidak bisa kembali ke form input dengan tombol Back)
+                // dan pastikan Dashboard dimuat ulang dari awal (Refresh)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+
+                // 3. Jalankan
+                startActivity(intent)
                 finish()
             }
             .addOnFailureListener { e ->

@@ -217,8 +217,18 @@ class EditLogMakananActivity : AppCompatActivity() {
             nama_makanan = nama,
             porsi = porsi,
             jenis_makanan = jenis,
-            foto_makanan_base64 = fotoBase64 // Simpan string Base64
+            foto_makanan_base64 = fotoBase64
         )
+
+        // Helper function untuk navigasi ke Riwayat
+        fun navigateToRiwayat() {
+            val intent = Intent(this, InputMakananActivity::class.java)
+            // FLAG_ACTIVITY_CLEAR_TOP akan menghapus halaman ini dari tumpukan
+            // dan kembali ke halaman InputMakananActivity yang sudah ada/baru
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
+        }
 
         if (currentLogId == null) {
             // --- MODE CREATE ---
@@ -226,7 +236,7 @@ class EditLogMakananActivity : AppCompatActivity() {
                 .add(log)
                 .addOnSuccessListener {
                     Toast.makeText(this, "Data berhasil disimpan!", Toast.LENGTH_SHORT).show()
-                    finish()
+                    navigateToRiwayat() // <--- PANGGIL DI SINI
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(this, "Gagal menyimpan: ${e.message}", Toast.LENGTH_LONG).show()
@@ -238,7 +248,7 @@ class EditLogMakananActivity : AppCompatActivity() {
                 .set(updatedLog)
                 .addOnSuccessListener {
                     Toast.makeText(this, "Data berhasil diperbarui!", Toast.LENGTH_SHORT).show()
-                    finish()
+                    navigateToRiwayat() // <--- PANGGIL DI SINI
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(this, "Gagal update: ${e.message}", Toast.LENGTH_LONG).show()
@@ -256,6 +266,11 @@ class EditLogMakananActivity : AppCompatActivity() {
             .delete()
             .addOnSuccessListener {
                 Toast.makeText(this, "Data berhasil dihapus", Toast.LENGTH_SHORT).show()
+
+                // --- NAVIGASI KE RIWAYAT (SAMA SEPERTI DI ATAS) ---
+                val intent = Intent(this, InputMakananActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(intent)
                 finish()
             }
             .addOnFailureListener { e ->
