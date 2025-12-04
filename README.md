@@ -81,7 +81,7 @@ To run this project locally, follow these steps:
 
 1.  **Clone the repository**
     ```sh
-    git clone [https://github.com/dwiiittt/DiaLog.git](https://github.com/dwiiittt/DiaLog.git)
+    git clone https://github.com/dwiiittt/DiaLog.git
     ```
 2.  **Open in Android Studio**
     * Open Android Studio -> File -> Open -> Select the cloned folder.
