@@ -65,7 +65,7 @@ This project is built using **Android Native** technologies to ensure high perfo
 |:---:|:---:|:---:|:---:|
 | <img src="screenshot/Screenshot_20251203_165308_DiaLog.jpg" width="200"/> | <img src="screenshot/Screenshot_20251203_165319_DiaLog.jpg" width="200"/> | <img src="screenshot/Screenshot_20251203_165347_DiaLog.jpg" width="200"/> | <img src="screenshot/Screenshot_20251203_182817_DiaLog.jpg" width="200"/> |
 
-*(Note: Please ensure you have placed your screenshot images in a folder named `screenshots` in your repository)*
+
 
 ---
 
