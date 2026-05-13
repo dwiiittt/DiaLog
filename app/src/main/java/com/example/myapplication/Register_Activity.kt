@@ -159,7 +159,16 @@ class RegisterActivity : AppCompatActivity() {
         tipeDiabetes: String,
         email: String
     ) {
-        // Buat objek User menggunakan data class yang sudah kita buat
+        // 1. HITUNG TARGET DISINI SEBELUM DISIMPAN
+        val kaloriHarian = if (jenisKelamin.equals("Perempuan", ignoreCase = true)) {
+            beratBadan * 25
+        } else {
+            beratBadan * 30
+        }
+
+        val batasKarbo = (0.45 * kaloriHarian) / 4
+
+        // 2. MASUKKAN HASIL HITUNGAN KE OBJEK USER
         val user = User(
             uid = userId,
             nama = nama,
@@ -168,34 +177,23 @@ class RegisterActivity : AppCompatActivity() {
             berat_badan = beratBadan,
             tinggi_badan = tinggiBadan,
             tipe_diabetes = tipeDiabetes,
-            email = email
+            email = email,
+            target_kalori = kaloriHarian,      // Simpan hasil hitung
+            target_karbo = batasKarbo.toInt()  // Simpan hasil hitung
         )
 
-        // Simpan objek User ke koleksi "users" dengan ID dokumen = userId
+        // 3. SIMPAN KE FIRESTORE
         db.collection("users").document(userId)
             .set(user)
             .addOnSuccessListener {
-                // Sembunyikan loading
-                // binding.progressBar.visibility = View.GONE
-
                 Toast.makeText(this, "Registrasi Berhasil!", Toast.LENGTH_SHORT).show()
 
-
                 val intent = Intent(this, LoginActivity::class.java)
-
-                // Hapus semua activity sebelumnya (termasuk register) dari tumpukan
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-
                 startActivity(intent)
-
-                finish() // Tutup RegisterActivity agar tidak bisa kembali
-                // Pindahkan pengguna ke Halaman Utama (HomeActivity)
-                // val intent = Intent(this, HomeActivity::class.java)
-                // startActivity(intent)
-                // finish() // Tutup activity ini
+                finish()
             }
             .addOnFailureListener { e ->
-                // Sembunyikan loading
                 Log.w("RegisterActivity", "Error adding document", e)
                 Toast.makeText(this, "Gagal menyimpan data profil", Toast.LENGTH_SHORT).show()
             }

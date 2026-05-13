@@ -8,5 +8,7 @@ data class User(
     val berat_badan: Int = 0,
     val tinggi_badan: Int = 0,
     val tipe_diabetes: String = "",
-    val email: String = ""
+    val email: String = "",
+    val target_kalori: Int = 0, // Tambahkan ini
+    val target_karbo: Int = 0   // Tambahkan ini
 )
