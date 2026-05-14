@@ -107,15 +107,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Indeks GI"
+                            android:text="Serat"
                             android:textSize="12sp" />
                         <TextView
-                            android:id="@+id/tvDetailGI"
+                            android:id="@+id/tvDetailSerat"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="-"
+                            android:text="0 g"
                             android:textStyle="bold"
-                            android:textColor="@android:color/holo_green_dark"
                             android:textSize="16sp" />
                     </LinearLayout>
                 </LinearLayout>

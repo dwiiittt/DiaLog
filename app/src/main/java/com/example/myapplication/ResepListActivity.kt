@@ -45,6 +45,7 @@ class ResepListActivity : AppCompatActivity() {
             intent.putExtra("KALORI", resep.total_kalori)
             intent.putExtra("KARBO", resep.total_karbo)
             intent.putExtra("GI", resep.level_gi)
+            intent.putExtra("SERAT", resep.total_serat)
             intent.putExtra("FOTO", resep.foto_resep_base64)
 
             // Kirim List (ArrayList)

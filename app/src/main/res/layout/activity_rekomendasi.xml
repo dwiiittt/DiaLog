@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F8FAFC"
     tools:context=".RekomendasiActivity">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/bottom_navigation"
@@ -19,117 +20,163 @@
             android:padding="16dp">
 
             <TextView
-                android:id="@+id/tvJudulRekomendasi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Perencana Makan"
-                android:textSize="24sp"
+                android:text="Rekomendasi Hari Ini"
+                android:textSize="22sp"
                 android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:textColor="#1E293B"/>
 
             <TextView
-                android:id="@+id/tvSubJudulRekomendasi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pilih kategori makanan untuk melihat resep sehat yang sesuai dengan profil Anda."
+                android:text="Menu optimal berdasarkan target nutrisi Anda"
                 android:textSize="14sp"
-                android:layout_marginBottom="24dp"/>
+                android:textColor="#64748B"
+                android:layout_marginBottom="16dp"/>
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardSarapan"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                app:cardCornerRadius="8dp"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#EE0000"
+                app:cardCornerRadius="16dp"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total Nutrisi Paket"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="8dp"
+                        android:weightSum="3">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tvTotalKaloriGA"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0"
+                                android:textColor="#FFFFFF"
+                                android:textSize="18sp"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Kalori"
+                                android:textColor="#F8FAFC"
+                                android:textSize="10sp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tvTotalKarboGA"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0g"
+                                android:textColor="#FFFFFF"
+                                android:textSize="18sp"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Karbo"
+                                android:textColor="#F8FAFC"
+                                android:textSize="10sp"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tvTotalSeratGA"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0g"
+                                android:textColor="#FFFFFF"
+                                android:textSize="18sp"
+                                android:textStyle="bold"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Serat"
+                                android:textColor="#F8FAFC"
+                                android:textSize="10sp"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <include
+                android:id="@+id/layoutSarapan"
+                layout="@layout/item_rekomendasi_ga_v2" />
+
+            <include
+                android:id="@+id/layoutSiang"
+                layout="@layout/item_rekomendasi_ga_v2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+
+            <include
+                android:id="@+id/layoutSnack"
+                layout="@layout/item_rekomendasi_ga_v2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+
+            <include
+                android:id="@+id/layoutMalam"
+                layout="@layout/item_rekomendasi_ga_v2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+
+            <Button
+                android:id="@+id/btnAcakUlang"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginBottom="16dp"
-                app:cardElevation="4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Sarapan"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:drawablePadding="16dp"
-                    app:drawableStartCompat="@drawable/ic_free_breakfast" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardMakanSiang"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                app:cardCornerRadius="8dp"
-                android:layout_marginBottom="16dp"
-                app:cardElevation="4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Makan Siang"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:drawablePadding="16dp"
-                    app:drawableStartCompat="@drawable/ic_restaurant" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardMakanMalam"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                app:cardCornerRadius="8dp"
-                android:layout_marginBottom="16dp"
-                app:cardElevation="4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Makan Malam"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:drawablePadding="16dp"
-                    app:drawableStartCompat="@drawable/ic_dinner_dining" />
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardSnack"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Snack"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_gravity="center"
-                    android:drawablePadding="16dp"
-                    app:drawableStartCompat="@drawable/ic_icecream" />
-            </androidx.cardview.widget.CardView>
+                android:text="ACAK ULANG MENU"
+                android:backgroundTint="#EE0000"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                app:icon="@drawable/ic_refresh"
+                app:iconGravity="textStart"
+                app:iconTint="#FFFFFF"/>
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:menu="@menu/bottom_nav_menu" />
+        app:menu="@menu/bottom_nav_menu"
+        android:background="#FFFFFF"/>
 
 </RelativeLayout>

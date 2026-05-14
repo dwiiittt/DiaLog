@@ -20,7 +20,7 @@ class DetailResepActivity : AppCompatActivity() {
         val kategori = intent.getStringExtra("KATEGORI")
         val kalori = intent.getIntExtra("KALORI", 0)
         val karbo = intent.getDoubleExtra("KARBO", 0.0)
-        val gi = intent.getStringExtra("GI")
+        val serat = intent.getDoubleExtra("SERAT", 0.0)
         val fotoBase64 = intent.getStringExtra("FOTO")
 
         // Ambil List String (Bahan & Langkah)
@@ -32,7 +32,7 @@ class DetailResepActivity : AppCompatActivity() {
         binding.tvDetailKategori.text = kategori
         binding.tvDetailKalori.text = "$kalori kkal"
         binding.tvDetailKarbo.text = "$karbo g"
-        binding.tvDetailGI.text = gi
+        binding.tvDetailSerat.text = "$serat g"
 
         // Format List menjadi Teks berbaris
         // Bahan: "- Ayam\n- Garam"

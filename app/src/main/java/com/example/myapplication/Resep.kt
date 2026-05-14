@@ -11,6 +11,7 @@ data class Resep(
     val foto_resep_base64: String = "", // Teks Base64 dari foto resep
     val total_kalori: Int = 0,
     val total_karbo: Double = 0.0,
+    val total_serat: Double = 0.0, // Tambahkan ini
     val level_gi: String = "Rendah", // Rendah, Sedang, Tinggi
 
     // Kita gunakan List<String> agar mudah

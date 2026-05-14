@@ -38,6 +38,7 @@ class ResepAdapter(
             tvKalori.text = "${resep.total_kalori} kkal"
             tvGI.text = "GI ${resep.level_gi}"
 
+
             // Logika Gambar Base64 (Sama seperti LogMakanan)
             if (resep.foto_resep_base64.isNotEmpty()) {
                 try {
