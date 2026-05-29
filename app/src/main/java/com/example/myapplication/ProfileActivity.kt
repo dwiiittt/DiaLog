@@ -117,7 +117,35 @@ class ProfileActivity : AppCompatActivity() {
         datePicker.datePicker.maxDate = System.currentTimeMillis()
         datePicker.show()
     }
-
+    // FUNGSI BARU — tambahkan di dalam class ProfileActivity
+    private fun hitungTargetSerat(usia: Int, jenisKelamin: String): Pair<Double, Double> {
+        val seratAKG = if (jenisKelamin.equals("Perempuan", ignoreCase = true)) {
+            when {
+                usia <= 12 -> 27.0
+                usia <= 15 -> 29.0
+                usia <= 18 -> 29.0
+                usia <= 29 -> 32.0
+                usia <= 49 -> 30.0
+                usia <= 64 -> 25.0
+                usia <= 80 -> 22.0
+                else       -> 20.0
+            }
+        } else {
+            when {
+                usia <= 12 -> 28.0
+                usia <= 15 -> 34.0
+                usia <= 18 -> 37.0
+                usia <= 29 -> 37.0
+                usia <= 49 -> 36.0
+                usia <= 64 -> 30.0
+                usia <= 80 -> 25.0
+                else       -> 22.0
+            }
+        }
+        val seratMin = seratAKG - 5.0
+        val seratMax = seratAKG + 5.0
+        return Pair(seratMin, seratMax)
+    }
     /**
      * Validasi input, hitung ulang target kalori/karbo, dan simpan ke Firestore
      */
@@ -139,40 +167,68 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         val jenisKelamin = findViewById<RadioButton>(selectedJenisKelaminId).text.toString()
-        val beratBadan = beratStr.toIntOrNull() ?: 0
-        val tinggiBadan = tinggiStr.toIntOrNull() ?: 0
+        val beratBadan = beratStr.toDoubleOrNull() ?: 0.0
+        val tinggiBadan = tinggiStr.toDoubleOrNull() ?: 0.0
 
-        // 3. HITUNG ULANG TARGET NUTRISI
-        // Rumus: Laki-laki = BB * 30, Perempuan = BB * 25
-        val kaloriHarian = if (jenisKelamin.equals("Perempuan", ignoreCase = true)) {
-            beratBadan * 25
+        // 3. Hitung usia dari tgl_lahir
+        val sdf = java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault())
+        val birthDate = sdf.parse(tglLahir)
+        val usia = if (birthDate != null) {
+            val today = java.util.Calendar.getInstance()
+            val birth = java.util.Calendar.getInstance().apply { time = birthDate }
+            var age = today.get(java.util.Calendar.YEAR) - birth.get(java.util.Calendar.YEAR)
+            if (today.get(java.util.Calendar.DAY_OF_YEAR) < birth.get(java.util.Calendar.DAY_OF_YEAR)) age--
+            age
+        } else 0
+
+        // 4. Hitung BMI
+        val tinggiMeter = tinggiBadan / 100.0
+        val bmi = if (tinggiMeter > 0) beratBadan / (tinggiMeter * tinggiMeter) else 0.0
+
+        // 5. Hitung BBi (Broca Modifikasi)
+        val bbi = if (jenisKelamin.equals("Perempuan", ignoreCase = true)) {
+            0.85 * (tinggiBadan - 100)
         } else {
-            beratBadan * 30
+            0.90 * (tinggiBadan - 100)
         }
 
-        // Rumus Karbo: 45% dari total kalori dibagi 4 (1 gram karbo = 4 kalori)
-        val batasKarbo = (0.45 * kaloriHarian) / 4
+        // 6. Tentukan BB untuk kalori
+        val bbUntukKalori = if (bmi >= 30.0) {
+            bbi + 0.25 * (beratBadan - bbi)
+        } else {
+            bbi
+        }
 
-        // 4. Siapkan Map untuk Update (agar field lain seperti email/uid tidak hilang)
+        // 7. Hitung kalori & karbo
+        val kaloriHarian = if (jenisKelamin.equals("Perempuan", ignoreCase = true)) {
+            (25 * bbUntukKalori).toInt()
+        } else {
+            (30 * bbUntukKalori).toInt()
+        }
+        val batasKarbo = ((0.45 * kaloriHarian) / 4).toInt()
+
+        // 8. Hitung target serat dari AKG
+        val (seratMin, seratMax) = hitungTargetSerat(usia, jenisKelamin)
+
+        // 9. Simpan ke Firestore
         val userUpdates = mapOf<String, Any>(
             "nama" to nama,
-            "berat_badan" to beratBadan,
-            "tinggi_badan" to tinggiBadan,
+            "berat_badan" to beratBadan.toInt(),
+            "tinggi_badan" to tinggiBadan.toInt(),
             "tgl_lahir" to tglLahir,
             "jenis_kelamin" to jenisKelamin,
             "tipe_diabetes" to tipeDiabetes,
             "target_kalori" to kaloriHarian,
-            "target_karbo" to batasKarbo.toInt()
+            "target_karbo" to batasKarbo,
+            "target_serat_min" to seratMin,
+            "target_serat_max" to seratMax
         )
 
-        // 5. Update ke Firebase Firestore
         db.collection("users").document(userId)
             .update(userUpdates)
             .addOnSuccessListener {
                 Toast.makeText(this, "Profil & Target Nutrisi berhasil diperbarui!", Toast.LENGTH_SHORT).show()
                 Log.d("ProfileActivity", "Update success for UID: $userId")
-
-                // Kembali ke Dashboard
                 startActivity(Intent(this, DashboardActivity::class.java))
                 finish()
             }
@@ -181,7 +237,6 @@ class ProfileActivity : AppCompatActivity() {
                 Log.e("ProfileActivity", "Error updating profile", e)
             }
     }
-
     private fun setupBottomNavigation() {
         binding.bottomNavigation.selectedItemId = R.id.nav_profile
         binding.bottomNavigation.setOnItemSelectedListener { item ->

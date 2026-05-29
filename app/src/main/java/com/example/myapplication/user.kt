@@ -10,5 +10,7 @@ data class User(
     val tipe_diabetes: String = "",
     val email: String = "",
     val target_kalori: Int = 0, // Tambahkan ini
-    val target_karbo: Int = 0   // Tambahkan ini
+    val target_karbo: Int = 0,  // Tambahkan ini
+    val target_serat_min: Double = 0.0, // Tambahkan ini
+    val target_serat_max: Double = 0.0 // Tambahkan ini
 )

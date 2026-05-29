@@ -113,15 +113,12 @@ class DashboardActivity : AppCompatActivity() {
                 Log.e("Dashboard", "Error fetching user data", e)
             }
     }
-
     private fun displayProfile(user: User) {
-        // ... (Fungsi ini tidak berubah) ...
-        val kaloriHarian = if (user.jenis_kelamin.equals("Perempuan", ignoreCase = true)) {
-            user.berat_badan * 25
-        } else {
-            user.berat_badan * 30
-        }
-        val batasKarbo = (0.45 * kaloriHarian) / 4
+        val kaloriHarian = user.target_kalori
+        val batasKarbo = user.target_karbo
+        val seratMin = user.target_serat_min
+        val seratMax = user.target_serat_max
+
         val tinggiMeter = user.tinggi_badan / 100.0
         val bmi = if (tinggiMeter > 0) user.berat_badan / (tinggiMeter.pow(2)) else 0.0
         val statusBmi = when {
@@ -130,19 +127,20 @@ class DashboardActivity : AppCompatActivity() {
             bmi < 30.0 -> "Gemuk"
             else -> "Obesitas"
         }
-        val anjuranSerat = "25-30 gram"
+
+        // Format tampilan serat — bulatkan jadi integer supaya rapi
+        val seratTampil = "${seratMin.toInt()}-${seratMax.toInt()} gram"
+
         binding.tvHaloUser.text = "Halo, ${user.nama}"
         binding.tvBeratBadanValue.text = "${user.berat_badan} kg"
         binding.tvTinggiBadanValue.text = "${user.tinggi_badan} cm"
         binding.tvTipeDiabetesValue.text = user.tipe_diabetes
         binding.tvKaloriValue.text = "$kaloriHarian kkal"
-        binding.tvKarboValue.text = "${batasKarbo.toInt()} gram"
+        binding.tvKarboValue.text = "$batasKarbo gram"
         binding.tvBmiValue.text = String.format("%.1f", bmi)
         binding.tvStatusBmiValue.text = statusBmi
-        binding.tvSeratValue.text = anjuranSerat
+        binding.tvSeratValue.text = seratTampil  // Tidak lagi hardcode "25-30 gram"
     }
-
-
     /**
      * =====================================
      * FUNGSI BARU UNTUK SARAN CERDAS

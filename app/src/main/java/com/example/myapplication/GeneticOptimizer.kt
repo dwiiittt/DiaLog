@@ -5,15 +5,12 @@ import kotlin.math.abs
 class GeneticOptimizer(
     private val allResep: List<Resep>,
     private val targetKalori: Int,
-    private val targetKarbo: Double
+    private val targetKarbo: Double,
+    private val targetSeratMin: Double,
+    private val targetSeratMax: Double
 ) {
     private val populationSize = 30 // Ukuran populasi sedikit diperbesar agar lebih variatif
     private val generations = 70
-
-    // Target Serat Baru
-    private val targetSeratMin = 25.0
-    private val targetSeratMax = 30.0
-
     fun solve(): List<Resep> {
         var population = List(populationSize) { generateRandomSolution() }
 

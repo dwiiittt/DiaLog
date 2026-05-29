@@ -20,6 +20,8 @@ class RekomendasiActivity : AppCompatActivity() {
     private var allResep = mutableListOf<Resep>()
     private var targetKalori = 2000
     private var targetKarbo = 150.0
+    private var targetSeratMin = 27.0  // ← tambah ini
+    private var targetSeratMax = 37.0  // ← tambah ini
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +56,8 @@ class RekomendasiActivity : AppCompatActivity() {
                 if (user != null) {
                     targetKalori = user.target_kalori
                     targetKarbo = user.target_karbo.toDouble()
+                    targetSeratMin = user.target_serat_min  // ← tambah ini
+                    targetSeratMax = user.target_serat_max  // ← tambah ini
                 }
                 fetchAllResep()
             }
@@ -80,7 +84,7 @@ class RekomendasiActivity : AppCompatActivity() {
 
         // --- MEMANGGIL LOGIC GENETIC ALGORITHM ---
         // Pastikan parameter targetKalori dan targetKarbo sudah terisi dari loadUserData
-        val optimizer = GeneticOptimizer(allResep, targetKalori, targetKarbo)
+        val optimizer = GeneticOptimizer(allResep, targetKalori, targetKarbo, targetSeratMin, targetSeratMax)
 
         // Jalankan pencarian solusi terbaik
         val bestMenu = optimizer.solve()
