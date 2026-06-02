@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.util.Log
 import kotlin.math.abs
 
 class GeneticOptimizer(
@@ -9,25 +10,38 @@ class GeneticOptimizer(
     private val targetSeratMin: Double,
     private val targetSeratMax: Double
 ) {
-    private val populationSize = 30 // Ukuran populasi sedikit diperbesar agar lebih variatif
+    private val populationSize = 30
     private val generations = 70
+
     fun solve(): List<Resep> {
         var population = List(populationSize) { generateRandomSolution() }
 
-        repeat(generations) {
+        // Mengubah repeat menjadi for-loop agar kita bisa tahu angka generasinya (1 sampai 70)
+        for (generasi in 1..generations) {
             val sortedPop = population.sortedBy { calculateFitness(it) }
+
+            // --- LOGCAT MONITORING ---
+            // Karena sortedPop sudah diurutkan dari yang terkecil (terbaik), indeks ke-0 adalah juaranya
+            val fitnessTerbaik = calculateFitness(sortedPop[0])
+            Log.d("GA_Optimizer", "Generasi Ke-$generasi -> Fitness Terbaik: $fitnessTerbaik")
+            // -------------------------
+
             val nextGen = mutableListOf<List<Resep>>()
 
-            nextGen.addAll(sortedPop.take(5)) // Elitism
+            // Elitisme: Amankan 5 terbaik
+            nextGen.addAll(sortedPop.take(5))
 
+            // Reproduksi hingga populasi kembali penuh (30)
             while (nextGen.size < populationSize) {
                 val parent1 = sortedPop.take(15).random()
                 val parent2 = sortedPop.take(15).random()
-                nextGen.add(crossover(parent1, parent2))
+                val child = crossover(parent1, parent2)
+                nextGen.add(mutate(child))
             }
             population = nextGen
         }
 
+        // Mengambil 1 yang terbaik dari generasi terakhir (generasi 70)
         return population.minByOrNull { calculateFitness(it) } ?: emptyList()
     }
 
@@ -43,24 +57,19 @@ class GeneticOptimizer(
     private fun calculateFitness(solution: List<Resep>): Double {
         val totalKal = solution.sumOf { it.total_kalori }
         val totalKar = solution.sumOf { it.total_karbo }
-        val totalSerat = solution.sumOf { it.total_serat ?: 0.0 } // Mengambil data serat
+        val totalSerat = solution.sumOf { it.total_serat ?: 0.0 }
 
-        // Perhitungan selisih Kalori & Karbo
         val diffKal = abs(targetKalori - totalKal)
-        val diffKar = abs(targetKarbo - totalKar)
+        val diffKarNew = abs(targetKarbo - totalKar) // Perbaikan: diubah dari diffKar menjadi diffKarNew agar tidak duplikat variabel
 
-        // LOGIKA BARU: Penalti Serat
         var penaltySerat = 0.0
         if (totalSerat < targetSeratMin) {
-            // Jika serat kurang dari 25g, beri penalti besar
             penaltySerat = (targetSeratMin - totalSerat) * 50
         } else if (totalSerat > targetSeratMax) {
-            // Jika serat lebih dari 30g, beri penalti ringan (serat lebih tidak seburuk kurang serat)
             penaltySerat = (totalSerat - targetSeratMax) * 10
         }
 
-        // Skor akhir: Semakin kecil nilainya, semakin mendekati target (termasuk serat)
-        return (diffKal + (diffKar * 5) + penaltySerat)
+        return (diffKal + (diffKarNew * 5) + penaltySerat)
     }
 
     private fun crossover(p1: List<Resep>, p2: List<Resep>): List<Resep> {
@@ -70,5 +79,17 @@ class GeneticOptimizer(
             if (Math.random() > 0.5) p1[2] else p2[2],
             if (Math.random() > 0.5) p1[3] else p2[3]
         )
+    }
+
+    private fun mutate(solution: List<Resep>): List<Resep> {
+        val mutationRate = 0.1
+        return solution.map { resep ->
+            if (Math.random() < mutationRate) {
+                val kandidat = allResep.filter { it.kategori == resep.kategori }
+                if (kandidat.isNotEmpty()) kandidat.random() else resep
+            } else {
+                resep
+            }
+        }
     }
 }
