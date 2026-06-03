@@ -83,13 +83,10 @@ class RekomendasiActivity : AppCompatActivity() {
         }
 
         // --- MEMANGGIL LOGIC GENETIC ALGORITHM ---
-        // Pastikan parameter targetKalori dan targetKarbo sudah terisi dari loadUserData
         val optimizer = GeneticOptimizer(allResep, targetKalori, targetKarbo, targetSeratMin, targetSeratMax)
 
-        // Jalankan pencarian solusi terbaik
         val bestMenu = optimizer.solve()
 
-        // Pastikan hasil solve mengembalikan 4 menu (Sarapan, Siang, Snack, Malam)
         if (bestMenu.size == 4) {
             displayResult(bestMenu[0], bestMenu[1], bestMenu[2], bestMenu[3])
         } else {

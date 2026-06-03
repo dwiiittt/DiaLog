@@ -14,34 +14,49 @@ class GeneticOptimizer(
     private val generations = 70
 
     fun solve(): List<Resep> {
+        // [POKOK SIKLUS] POPULASI AWAL (30 kromosom acak)
         var population = List(populationSize) { generateRandomSolution() }
 
-        // Mengubah repeat menjadi for-loop agar kita bisa tahu angka generasinya (1 sampai 70)
         for (generasi in 1..generations) {
-            val sortedPop = population.sortedBy { calculateFitness(it) }
 
-            // --- LOGCAT MONITORING ---
-            // Karena sortedPop sudah diurutkan dari yang terkecil (terbaik), indeks ke-0 adalah juaranya
-            val fitnessTerbaik = calculateFitness(sortedPop[0])
+            // 1. EVALUASI FITNESS
+            // Mengurutkan populasi saat ini hanya untuk mengambil juara bertahan sebagai log monitoring
+            val sortedCurrentPop = population.sortedBy { calculateFitness(it) }
+            val fitnessTerbaik = calculateFitness(sortedCurrentPop[0])
             Log.d("GA_Optimizer", "Generasi Ke-$generasi -> Fitness Terbaik: $fitnessTerbaik")
-            // -------------------------
+
+            // 2. REPRODUKSI: CROSSOVER DAN MUTASI
+            // Mengawinkan populasi saat ini secara acak untuk menghasilkan anak-anak baru
+            val anakAnak = mutableListOf<List<Resep>>()
+            while (anakAnak.size < populationSize) {
+                val parent1 = population.random()
+                val parent2 = population.random()
+                val child = crossover(parent1, parent2)
+                anakAnak.add(mutate(child))
+            }
+
+            // Menggabungkan Orang Tua (Populasi Lama) + Anak-Anak Baru (Total menjadi 60 kromosom)
+            val semuaKandidat = population + anakAnak
+
+            // Urutkan ke-60 kandidat dari yang fitness-nya paling KECIL/Mendekati target (Terbaik)
+            val sortedKandidat = semuaKandidat.sortedBy { calculateFitness(it) }
 
             val nextGen = mutableListOf<List<Resep>>()
 
-            // Elitisme: Amankan 5 terbaik
-            nextGen.addAll(sortedPop.take(5))
+            // 4. ELITISM
+            // Ambil 5 kromosom terbaik mutlak tanpa seleksi acak
+            nextGen.addAll(sortedKandidat.take(5))
 
-            // Reproduksi hingga populasi kembali penuh (30)
-            while (nextGen.size < populationSize) {
-                val parent1 = sortedPop.take(15).random()
-                val parent2 = sortedPop.take(15).random()
-                val child = crossover(parent1, parent2)
-                nextGen.add(mutate(child))
-            }
+            // 3. SELEKSI INDIVIDU
+            // Ambil 25 sisanya dari urutan terbaik berikutnya agar total populasi kembali menjadi 30
+            nextGen.addAll(sortedKandidat.drop(5).take(25))
+
+            // 5. POPULASI BARU
+            // Overwrite populasi lama dengan nextGen untuk dievaluasi pada iterasi/generasi berikutnya
             population = nextGen
         }
 
-        // Mengambil 1 yang terbaik dari generasi terakhir (generasi 70)
+        // Akhir dari 70 Generasi: Ambil 1 kombinasi menu terbaik mutlak
         return population.minByOrNull { calculateFitness(it) } ?: emptyList()
     }
 
@@ -60,7 +75,7 @@ class GeneticOptimizer(
         val totalSerat = solution.sumOf { it.total_serat ?: 0.0 }
 
         val diffKal = abs(targetKalori - totalKal)
-        val diffKarNew = abs(targetKarbo - totalKar) // Perbaikan: diubah dari diffKar menjadi diffKarNew agar tidak duplikat variabel
+        val diffKarNew = abs(targetKarbo - totalKar)
 
         var penaltySerat = 0.0
         if (totalSerat < targetSeratMin) {
