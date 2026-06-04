@@ -20,13 +20,13 @@ class GeneticOptimizer(
         for (generasi in 1..generations) {
 
             // 1. EVALUASI FITNESS
-            // Mengurutkan populasi saat ini hanya untuk mengambil juara bertahan sebagai log monitoring
+            // Mengurutkan populasi saat ini hanya untuk log monitoring
             val sortedCurrentPop = population.sortedBy { calculateFitness(it) }
             val fitnessTerbaik = calculateFitness(sortedCurrentPop[0])
             Log.d("GA_Optimizer", "Generasi Ke-$generasi -> Fitness Terbaik: $fitnessTerbaik")
 
             // 2. REPRODUKSI: CROSSOVER DAN MUTASI
-            // Mengawinkan populasi saat ini secara acak untuk menghasilkan anak-anak baru
+            // Mengawinkan populasi saat ini secara acak untuk menghasilkan 30 anak baru
             val anakAnak = mutableListOf<List<Resep>>()
             while (anakAnak.size < populationSize) {
                 val parent1 = population.random()
@@ -35,29 +35,66 @@ class GeneticOptimizer(
                 anakAnak.add(mutate(child))
             }
 
-            // Menggabungkan Orang Tua (Populasi Lama) + Anak-Anak Baru (Total menjadi 60 kromosom)
+            // Menggabungkan Orang Tua (30) + Anak-Anak Baru (30) = Total 60 Kandidat
             val semuaKandidat = population + anakAnak
 
-            // Urutkan ke-60 kandidat dari yang fitness-nya paling KECIL/Mendekati target (Terbaik)
+            // Urutkan ke-60 kandidat untuk mencari siapa yang pantas masuk VIP (Elitisme)
             val sortedKandidat = semuaKandidat.sortedBy { calculateFitness(it) }
 
             val nextGen = mutableListOf<List<Resep>>()
 
-            // 4. ELITISM
-            // Ambil 5 kromosom terbaik mutlak tanpa seleksi acak
+            // 4. ELITISME (JALUR VIP)
+            // Ambil 5 kromosom terbaik mutlak tanpa undian
             nextGen.addAll(sortedKandidat.take(5))
 
-            // 3. SELEKSI INDIVIDU
-            // Ambil 25 sisanya dari urutan terbaik berikutnya agar total populasi kembali menjadi 30
-            nextGen.addAll(sortedKandidat.drop(5).take(25))
+            // 3. SELEKSI INDIVIDU (JALUR RODA KEBERUNTUNGAN / ROULETTE WHEEL)
+            // Putar roda untuk mencari 25 kromosom sisa dari 60 kandidat yang ada
+            val sisaDuaPuluhLima = rouletteWheelSelection(semuaKandidat, 25)
+            nextGen.addAll(sisaDuaPuluhLima)
 
             // 5. POPULASI BARU
-            // Overwrite populasi lama dengan nextGen untuk dievaluasi pada iterasi/generasi berikutnya
+            // Overwrite populasi lama dengan nextGen (total 30 kromosom)
             population = nextGen
         }
 
         // Akhir dari 70 Generasi: Ambil 1 kombinasi menu terbaik mutlak
         return population.minByOrNull { calculateFitness(it) } ?: emptyList()
+    }
+
+    /**
+     * Fungsi Baru: Roulette Wheel Selection (Khusus untuk kasus Minimasi)
+     */
+    private fun rouletteWheelSelection(kandidat: List<List<Resep>>, jumlahYangDicari: Int): List<List<Resep>> {
+        val hasilSeleksi = mutableListOf<List<Resep>>()
+
+        // A. Karena ini Optimasi Minimasi (Error Kecil = Bagus), kita cari error terburuknya dulu
+        val semuaFitness = kandidat.map { calculateFitness(it) }
+        val maxFitness = semuaFitness.maxOrNull() ?: 1.0
+
+        // B. Inversi Nilai Fitness (Agar error kecil mendapat potongan kue roda yang besar)
+        // Ditambah 1.0 agar tidak ada nilai yang benar-benar 0 (menghindari probabilitas 0%)
+        val fitnessInversi = semuaFitness.map { maxFitness - it + 1.0 }
+        val totalFitnessInversi = fitnessInversi.sum()
+
+        // C. Putar roda sebanyak jumlah yang dicari (25 kali)
+        repeat(jumlahYangDicari) {
+            val nilaiAcakRoda = Math.random() * totalFitnessInversi
+            var hitunganAkumulatif = 0.0
+            var individuTerpilih: List<Resep>? = null
+
+            for (i in kandidat.indices) {
+                hitunganAkumulatif += fitnessInversi[i]
+                if (hitunganAkumulatif >= nilaiAcakRoda) {
+                    individuTerpilih = kandidat[i]
+                    break
+                }
+            }
+
+            // Masukkan individu yang ditunjuk jarum roda, jika error koma ambil acak sebagai fallback
+            hasilSeleksi.add(individuTerpilih ?: kandidat.random())
+        }
+
+        return hasilSeleksi
     }
 
     private fun generateRandomSolution(): List<Resep> {
